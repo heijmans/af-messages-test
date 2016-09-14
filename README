@@ -1,0 +1,48 @@
+1. change line 6 in index.html to test different angular versions.
+
+2. open index.html in Chrome (not tested in other browsers).
+
+3. open the developer console.
+
+output using angular 1.2.25:
+
+start watching text1
+start listening text1
+watch update text1
+start watching text2
+start listening text2
+watch update text2
+
+output using angular 1.5.6:
+
+start watching text1
+start listening text1
+watch update text1
+start watching text2
+watch update text2
+start listening text2
+
+as you can see from the angular 1.5 output, the text2 af-field triggers an update that is emitted before the af-messages directive for text2 starts listening. because of this, the first event might be lost.
+
+the difference between text1 and text2 is a ng-if attribute on text2. without the ng-if it works correctly.
+
+possible solution:
+
+angular-form-messages.js:80...
+
+      $scope.$watch(function () {
+        return [ngModel.$error, ngModel.$dirty];
+      }, function (newVal, oldVal) {
+        if (isPristineAfterSubmit || (triggerOn === 'change' && newVal[1])) {
+          // if this is the first time, delay the update to make sure that all af-messages are listening
+          if (angular.equals(newVal, oldVal)) {
+            $timeout(function() {
+              updateValidation();
+            });
+          } else {
+            updateValidation();
+          }
+        }
+      }, true);
+
+so add a timeout on the first watch update. this is a bit ugly. i hope there is a better way. i can make a pull request for this solution.

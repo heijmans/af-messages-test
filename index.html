@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="afApp">
+<head>
+	<meta charset="UTF-8">
+	<title>AF messages</title>
+	<script src='js/angular-1.5.6.js'></script>
+	<script src='js/angular-form-messages.js'></script>
+	<script src='js/angular-form-messages-bootstrap.js'></script>
+</head>
+<body>
+	<form name='form1' af-submit='ctrl.submit()' novalidate>
+		<div af-field-state='text1'>
+			<p><input af-field name='text1' ng-model='ctrl.text1' required /></p>
+			<div af-messages='text1'></div>
+		</div>
+		<div ng-if='true' af-field-state='text2'>
+			<p><input af-field name='text2' ng-model='ctrl.text2' required /></p>
+			<div af-messages='text2'></div>
+		</div>
+	</form>
+
+	<script type="text/javascript">
+
+		var app = angular.module('afApp', [ 'angularFormMessages', 'angularFormMessagesBootstrap' ]);
+
+		// dummy, just for dependency
+		app.factory('$translate', function($q) {
+			return function(label) {
+				return $q.when(label);
+			};
+		});
+
+	</script>
+</body>
+</html>
